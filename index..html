@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vine & Barrel | Wine Shop</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:Arial,Helvetica,sans-serif;background:#faf7f3;color:#35151b}
+button,input{font-family:inherit}
+header{position:sticky;top:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:18px 7%;background:#3b1018;color:white}
+.logo{font-size:23px;font-weight:bold}
+nav{display:flex;gap:28px}
+nav a{color:white;text-decoration:none}
+nav a:hover{color:#e8b46a}
+.cart-button{border:none;border-radius:20px;padding:10px 17px;background:#d7a24c;color:#291014;font-weight:bold;cursor:pointer}
+#cartCount{background:#3b1018;color:white;padding:3px 7px;border-radius:50%}
+.hero{min-height:560px;display:flex;align-items:center;padding:80px 10%;color:white;background:linear-gradient(rgba(45,10,18,.72),rgba(45,10,18,.72)),url("https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=1600&q=80") center/cover}
+.hero-content{max-width:650px}
+.hero-small{color:#e8b46a;letter-spacing:3px;font-size:14px;font-weight:bold}
+.hero h1{font-size:62px;line-height:1.1;margin:18px 0}
+.hero h1 span{color:#e8b46a}
+.hero p{font-size:18px;line-height:1.6}
+.shop-now{display:inline-block;margin-top:28px;padding:14px 25px;border-radius:6px;background:#d7a24c;color:#291014;text-decoration:none;font-weight:bold}
+.shop-section{padding:75px 8%}
+.section-heading{text-align:center;margin-bottom:35px}
+.section-heading small{color:#a47532;letter-spacing:2px;font-weight:bold}
+.section-heading h2{font-size:38px;margin-top:8px}
+.search-container{display:flex;justify-content:center;margin-bottom:25px}
+#searchInput{width:100%;max-width:550px;padding:14px 20px;border:1px solid #d3c8c0;border-radius:30px;outline:none;font-size:16px}
+#searchInput:focus{border-color:#7b1e2b}
+.filters{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-bottom:40px}
+.filter-button{padding:9px 18px;border:1px solid #7b1e2b;border-radius:25px;background:white;color:#7b1e2b;cursor:pointer}
+.filter-button.active,.filter-button:hover{background:#7b1e2b;color:white}
+.product-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:25px}
+.product-card{overflow:hidden;background:white;border-radius:12px;box-shadow:0 5px 20px rgba(0,0,0,.08);transition:transform .25s}
+.product-card:hover{transform:translateY(-6px)}
+.product-image{height:240px;display:flex;align-items:center;justify-content:center;background:#f1e7de;font-size:90px}
+.product-info{padding:20px}
+.product-type{color:#a47532;font-size:12px;font-weight:bold;text-transform:uppercase}
+.product-info h3{margin:8px 0;font-size:21px}
+.product-description{color:#777;font-size:14px;line-height:1.5;min-height:43px}
+.product-price{margin:15px 0;font-size:20px;font-weight:bold}
+.add-button{width:100%;padding:11px;border:none;border-radius:6px;background:#7b1e2b;color:white;font-weight:bold;cursor:pointer}
+.add-button:hover{background:#4d111a}
+.about{padding:70px 10%;text-align:center;background:#eee2d7}
+.about h2{font-size:35px;margin-bottom:15px}
+.about p{max-width:650px;margin:auto;color:#666;line-height:1.7}
+.cart-overlay{position:fixed;inset:0;display:none;background:rgba(0,0,0,.55);z-index:1999}
+.cart-overlay.show{display:block}
+.cart-sidebar{position:fixed;top:0;right:-430px;width:410px;height:100vh;display:flex;flex-direction:column;background:white;z-index:2000;transition:right .3s}
+.cart-sidebar.open{right:0}
+.cart-header{display:flex;justify-content:space-between;align-items:center;padding:20px;background:#3b1018;color:white}
+.close-cart{border:none;background:none;color:white;font-size:23px;cursor:pointer}
+.cart-items{flex:1;overflow-y:auto;padding:20px}
+.empty-cart{margin-top:50px;text-align:center;color:#888}
+.cart-item{display:flex;align-items:center;gap:12px;padding:15px 0;border-bottom:1px solid #ddd}
+.cart-icon{font-size:40px}
+.cart-item-info{flex:1}
+.cart-item-info h4{margin-bottom:5px}
+.cart-item-price{color:#777;font-size:14px}
+.quantity-controls{display:flex;align-items:center;gap:8px;margin-top:8px}
+.quantity-controls button{width:27px;height:27px;border:none;background:#eee;cursor:pointer}
+.remove-button{border:none;background:none;color:#b22222;font-size:18px;cursor:pointer}
+.cart-footer{padding:20px;border-top:1px solid #ddd}
+.cart-total{display:flex;justify-content:space-between;margin-bottom:15px;font-size:21px;font-weight:bold}
+.checkout-button{width:100%;padding:13px;border:none;border-radius:6px;background:#7b1e2b;color:white;font-weight:bold;cursor:pointer}
+.age-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(25,5,10,.96);z-index:5000}
+.age-box{width:90%;max-width:450px;padding:40px;text-align:center;background:white;border-radius:12px}
+.age-icon{font-size:60px}
+.age-box h2{margin:15px 0}
+.age-box p{color:#666;line-height:1.5}
+.age-buttons{display:flex;justify-content:center;gap:10px;margin-top:25px}
+.age-buttons button{padding:12px 18px;border:none;border-radius:6px;font-weight:bold;cursor:pointer}
+#confirmAge{background:#7b1e2b;color:white}
+#exitAge{background:#ddd}
+footer{padding:25px;text-align:center;background:#2c0d13;color:white;font-size:13px;line-height:1.8}
+
+/* Cart ribbon / paper-shot */
+.cart-toast{position:fixed;top:90px;right:25px;width:300px;display:flex;align-items:center;gap:15px;padding:15px 20px;background:white;border-left:6px solid #7b1e2b;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.2);transform:translateX(130%);opacity:0;z-index:4000;transition:transform .5s cubic-bezier(.17,.67,.35,1.3),opacity .3s ease}
+.cart-toast.show{transform:translateX(0);opacity:1}
+.ribbon{width:50px;height:50px;display:flex;align-items:center;justify-content:center;background:#d7a24c;border-radius:50%;font-size:25px;animation:ribbonPop .6s ease}
+.cart-toast strong{display:block;color:#7b1e2b;margin-bottom:4px}
+.cart-toast small{color:#777}
+@keyframes ribbonPop{0%{transform:scale(0) rotate(-30deg)}60%{transform:scale(1.2) rotate(10deg)}100%{transform:scale(1) rotate(0)}}
+.cart-toast::before,.cart-toast::after{content:"";position:absolute;width:8px;height:8px;background:#d7a24c;animation:paperShot .8s ease-out forwards;opacity:0}
+.cart-toast::before{left:30px;top:-8px}
+.cart-toast::after{right:30px;bottom:-8px}
+@keyframes paperShot{0%{transform:translate(0,0) scale(0);opacity:1}50%{opacity:1}100%{transform:translate(30px,-35px) scale(1.5);opacity:0}}
+
+@media(max-width:700px){
+header{padding:16px 4%}
+nav{display:none}
+.hero{min-height:500px;padding:50px 7%}
+.hero h1{font-size:43px}
+.shop-section{padding:55px 5%}
+.cart-sidebar{width:92%}
+.product-image{height:220px}
+}
+@media(max-width:600px){
+.cart-toast{top:80px;right:10px;left:10px;width:auto}
+}
+</style>
+</head>
+<body>
+
+<div id="ageOverlay" class="age-overlay">
+<div class="age-box">
+<div class="age-icon">🍷</div>
+<h2>Welcome to Vine & Barrel</h2>
+<p>This is a demonstration wine-shop website. Please confirm that you are of legal drinking age in your location.</p>
+<div class="age-buttons">
+<button id="confirmAge">I am of legal age</button>
+<button id="exitAge">Exit</button>
+</div>
+<p id="ageMessage"></p>
+</div>
+</div>
+
+<header>
+<div class="logo">🍷 Vine & Barrel</div>
+<nav>
+<a href="#home">Home</a>
+<a href="#shop">Wines</a>
+<a href="#about">About</a>
+</nav>
+<button id="openCart" class="cart-button">🛒 Cart <span id="cartCount">0</span></button>
+</header>
+
+<section id="home" class="hero">
+<div class="hero-content">
+<div class="hero-small">WELCOME TO VINE & BARREL</div>
+<h1>Discover Your<br><span>Perfect Wine</span></h1>
+<p>Explore our curated collection of wines for every occasion.</p>
+<a href="#shop" class="shop-now">Explore Wines</a>
+</div>
+</section>
+
+<section id="shop" class="shop-section">
+<div class="section-heading">
+<small>OUR COLLECTION</small>
+<h2>Choose Your Wine</h2>
+</div>
+<div class="search-container">
+<input type="text" id="searchInput" placeholder="🔍 Search for a wine...">
+</div>
+<div class="filters">
+<button class="filter-button active" data-category="All">All</button>
+<button class="filter-button" data-category="Red">Red</button>
+<button class="filter-button" data-category="White">White</button>
+<button class="filter-button" data-category="Rosé">Rosé</button>
+<button class="filter-button" data-category="Sparkling">Sparkling</button>
+</div>
+<div id="productGrid" class="product-grid"></div>
+</section>
+
+<section id="about" class="about">
+<h2>About Vine & Barrel</h2>
+<p>Vine & Barrel is a front-end demonstration project built using HTML, CSS and JavaScript. It demonstrates product browsing and a shopping-cart experience.</p>
+</section>
+
+<div id="cartOverlay" class="cart-overlay"></div>
+
+<aside id="cartSidebar" class="cart-sidebar">
+<div class="cart-header">
+<h2>🛒 Your Cart</h2>
+<button id="closeCart" class="close-cart">✕</button>
+</div>
+<div id="cartItems" class="cart-items"><p class="empty-cart">Your cart is empty.</p></div>
+<div class="cart-footer">
+<div class="cart-total"><span>Total</span><span>₹<span id="cartTotal">0</span></span></div>
+<button id="checkoutButton" class="checkout-button">Demo Checkout</button>
+</div>
+</aside>
+
+<div id="cartToast" class="cart-toast">
+<div class="ribbon">🎀</div>
+<div>
+<strong>Added to Cart!</strong>
+<small>Your wine has been added 🛒</small>
+</div>
+</div>
+
+<footer>
+<p>© 2026 Vine & Barrel — Demo Website</p>
+<p>Please drink responsibly. Alcohol laws vary by location.</p>
+</footer>
+
+<script>
+const products=[
+{id:1,name:"Crimson Valley",category:"Red",price:1299,icon:"🍷",description:"Rich and fruity with a smooth finish."},
+{id:2,name:"Golden Estate",category:"White",price:1099,icon:"🥂",description:"Refreshing with bright citrus notes."},
+{id:3,name:"Rose Garden",category:"Rosé",price:1199,icon:"🍷",description:"Delicate rosé with fresh berry aromas."},
+{id:4,name:"Royal Spark",category:"Sparkling",price:1599,icon:"🥂",description:"Elegant sparkling wine with lively bubbles."},
+{id:5,name:"Oak Reserve",category:"Red",price:1899,icon:"🍷",description:"Full-bodied wine with oak-inspired flavors."},
+{id:6,name:"Summer Breeze",category:"White",price:999,icon:"🥂",description:"Light and crisp with a refreshing finish."},
+{id:7,name:"Pink Blossom",category:"Rosé",price:1299,icon:"🍷",description:"Bright rosé with refreshing fruit flavors."},
+{id:8,name:"Celebration Gold",category:"Sparkling",price:1799,icon:"🥂",description:"Elegant sparkling wine for special occasions."}
+];
+
+let selectedCategory="All";
+let cart=JSON.parse(localStorage.getItem("vineBarrelCart"))||[];
+
+const productGrid=document.getElementById("productGrid");
+const searchInput=document.getElementById("searchInput");
+const cartSidebar=document.getElementById("cartSidebar");
+const cartOverlay=document.getElementById("cartOverlay");
+const cartItems=document.getElementById("cartItems");
+const cartTotal=document.getElementById("cartTotal");
+const cartCount=document.getElementById("cartCount");
+const cartToast=document.getElementById("cartToast");
+
+function formatPrice(price){return price.toLocaleString("en-IN")}
+
+function displayProducts(){
+const searchText=searchInput.value.toLowerCase().trim();
+const filteredProducts=products.filter(product=>{
+const categoryMatch=selectedCategory==="All"||product.category===selectedCategory;
+const searchMatch=product.name.toLowerCase().includes(searchText);
+return categoryMatch&&searchMatch;
+});
+productGrid.innerHTML="";
+if(!filteredProducts.length){
+productGrid.innerHTML='<p style="grid-column:1/-1;text-align:center;padding:40px">No wines found.</p>';
+return;
+}
+filteredProducts.forEach(product=>{
+const card=document.createElement("article");
+card.className="product-card";
+card.innerHTML=`
+<div class="product-image">${product.icon}</div>
+<div class="product-info">
+<span class="product-type">${product.category}</span>
+<h3>${product.name}</h3>
+<p class="product-description">${product.description}</p>
+<div class="product-price">₹${formatPrice(product.price)}</div>
+<button class="add-button" onclick="addToCart(${product.id})">Add to Cart</button>
+</div>`;
+productGrid.appendChild(card);
+});
+}
+
+function addToCart(productId){
+const product=products.find(product=>product.id===productId);
+if(!product)return;
+const existing=cart.find(item=>item.id===productId);
+if(existing)existing.quantity++;
+else cart.push({...product,quantity:1});
+saveCart();
+updateCart();
+showCartAnimation();
+openCart();
+}
+
+function showCartAnimation(){
+cartToast.classList.remove("show");
+void cartToast.offsetWidth;
+cartToast.classList.add("show");
+setTimeout(()=>cartToast.classList.remove("show"),2500);
+}
+
+function updateCart(){
+cartItems.innerHTML="";
+if(!cart.length){
+cartItems.innerHTML='<p class="empty-cart">Your cart is empty.</p>';
+}else{
+cart.forEach(item=>{
+const element=document.createElement("div");
+element.className="cart-item";
+element.innerHTML=`
+<div class="cart-icon">${item.icon}</div>
+<div class="cart-item-info">
+<h4>${item.name}</h4>
+<p class="cart-item-price">₹${formatPrice(item.price)}</p>
+<div class="quantity-controls">
+<button onclick="changeQuantity(${item.id},-1)">−</button>
+<span>${item.quantity}</span>
+<button onclick="changeQuantity(${item.id},1)">+</button>
+</div>
+</div>
+<button class="remove-button" onclick="removeFromCart(${item.id})">✕</button>`;
+cartItems.appendChild(element);
+});
+}
+updateTotal();
+updateCartCount();
+}
+
+function changeQuantity(productId,change){
+const item=cart.find(item=>item.id===productId);
+if(!item)return;
+item.quantity+=change;
+if(item.quantity<=0)cart=cart.filter(item=>item.id!==productId);
+saveCart();
+updateCart();
+}
+
+function removeFromCart(productId){
+cart=cart.filter(item=>item.id!==productId);
+saveCart();
+updateCart();
+}
+
+function updateTotal(){
+const total=cart.reduce((sum,item)=>sum+item.price*item.quantity,0);
+cartTotal.textContent=formatPrice(total);
+}
+
+function updateCartCount(){
+cartCount.textContent=cart.reduce((sum,item)=>sum+item.quantity,0);
+}
+
+function saveCart(){
+localStorage.setItem("vineBarrelCart",JSON.stringify(cart));
+}
+
+function openCart(){
+cartSidebar.classList.add("open");
+cartOverlay.classList.add("show");
+}
+
+function closeCart(){
+cartSidebar.classList.remove("open");
+cartOverlay.classList.remove("show");
+}
+
+document.getElementById("openCart").addEventListener("click",openCart);
+document.getElementById("closeCart").addEventListener("click",closeCart);
+cartOverlay.addEventListener("click",closeCart);
+searchInput.addEventListener("input",displayProducts);
+
+document.querySelectorAll(".filter-button").forEach(button=>{
+button.addEventListener("click",()=>{
+document.querySelectorAll(".filter-button").forEach(btn=>btn.classList.remove("active"));
+button.classList.add("active");
+selectedCategory=button.dataset.category;
+displayProducts();
+});
+});
+
+const ageOverlay=document.getElementById("ageOverlay");
+const confirmAge=document.getElementById("confirmAge");
+const exitAge=document.getElementById("exitAge");
+const ageMessage=document.getElementById("ageMessage");
+
+if(localStorage.getItem("vineBarrelAgeVerified")==="true"){
+ageOverlay.style.display="none";
+}
+
+confirmAge.addEventListener("click",()=>{
+localStorage.setItem("vineBarrelAgeVerified","true");
+ageOverlay.style.display="none";
+});
+
+exitAge.addEventListener("click",()=>{
+confirmAge.style.display="none";
+exitAge.style.display="none";
+ageMessage.textContent="You cannot enter this demo.";
+});
+
+document.getElementById("checkoutButton").addEventListener("click",()=>{
+if(!cart.length){
+alert("Your cart is empty.");
+return;
+}
+alert("Demo checkout only.\n\nNo real order or payment has been processed.");
+});
+
+displayProducts();
+updateCart();
+</script>
+</body>
+</html>
